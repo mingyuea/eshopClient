@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom';
 import Style from '../scss/Root.scss';
 import InitGreet from './InitGreet';
 import Login from './Login.js';
+import InventoryCont from './InventoryCont.js';
+import ItemComp from './ItemComp.js';
+import CartComp from './CartComp.js';
 
 class Root extends React.Component {
 	constructor(props){
 		super(props);
 
 		this.state = {
+			"fetchUrl": "http://localhost:5000/",
 			"renderPhase": 0,
 			"uInput": "",
 			"pInput": "",
@@ -19,7 +23,31 @@ class Root extends React.Component {
 			"isSignUp": false,
 			"loadingMsg": null,
 			"currName": "",
-			"dispName": ""
+			"dispName": "",
+			"inventoryData": [
+				{
+					"itemInd": 0,
+					"itemCode": "p1",
+					"itemName": "Casual Pants",
+					"price": "$18",
+					"img": require("../resources/p1.jpg"),
+					"descr": "A pair of nice, casual pants, for doing casual stuff",
+					"rating": "3.5"
+				},
+				{
+					"itemInd": 1,
+					"itemCode": "p2",
+					"itemName": "Some Other Casual Pants",
+					"price": "$21.99",
+					"img": require("../resources/p2.jpg"),
+					"descr": "A better pair of nice, casual pants, for doing casual stuff",
+					"rating": "4"
+				}
+			],
+			"inventoryDisp": {display: 'block'},
+			"itemDisp": {dipslay: 'none'},
+			"currItemView": null,
+			"tmpCart": [],
 		}
 
 
@@ -29,6 +57,12 @@ class Root extends React.Component {
 		this.handlePass2Change = this.handlePass2Change.bind(this);
 		this.handleInitCancel = this.handleInitCancel.bind(this);
 		this.handleLogin = this.handleLogin.bind(this);
+
+		this.handleInvItemSel = this.handleInvItemSel.bind(this);
+		this.handleItemBuy = this.handleItemBuy.bind(this);
+		this.handleItemClose = this.handleItemClose.bind(this);
+		this.showCart = this.showCart.bind(this);
+		this.handleCartClose = this.handleCartClose.bind(this);
 	}
 
 	handleInitSel(choice){  //handles choice of login/signup/anon
@@ -111,7 +145,7 @@ class Root extends React.Component {
 				});
 			}
 			else{  //this controls the signup function if no prev problems
-				let url = this.state.fetchUrl + '/signup';
+				let url = this.state.fetchUrl + 'auth/signup';
 				let signupObj = {
 					'username': this.state.uInput,
 					'password': this.state.pInput
@@ -130,6 +164,10 @@ class Root extends React.Component {
 					}
 				})
 				.then(res => res.json())
+				.then(resObj => {
+					console.log(resObj);
+					return resObj;
+				})
 				.then(data => {
 					if(data.actionSuccess){
 						return true;
@@ -154,14 +192,11 @@ class Root extends React.Component {
 							"dispName": dispName
 						});
 					}
-				})
-				.then(() => {
-					this.handleListSel("AAPL", 0, '1m');
 				});
 			}
 		}
 		else{ //this controls the login function
-			let url = this.state.fetchUrl + '/login';
+			let url = this.state.fetchUrl + 'auth/login';
 			let loginObj = {
 				'username': this.state.uInput,
 				'password': this.state.pInput,
@@ -180,6 +215,10 @@ class Root extends React.Component {
 				}
 			})
 			.then(res => res.json())
+			.then(data => {
+				console.log(data);
+				return data;
+			})
 			.then(resObj => {
 				if(resObj.actionSuccess){
 					let dispName = this.state.uInput;
@@ -205,6 +244,50 @@ class Root extends React.Component {
 		}
 	}
 
+	handleInvItemSel(ind){
+		console.log(ind);
+
+		this.setState({
+			"currItemView": ind,
+			"inventoryDisp": {display: 'none'},
+			"itemDisp": {display: 'block'},
+		});
+	}
+
+	handleItemBuy(){
+		let itemCode = this.state.inventoryData[this.state.currItemView].itemCode;
+
+
+		//THIS IS A PLACEHOLDER FOR THE BACKEND
+		let tmpCart = this.state.tmpCart;
+		tmpCart.push(itemCode);
+		this.setState({
+			"tmpCart": tmpCart
+		});
+		console.log(tmpCart);
+		/**PLACEHOLDER ENDS HERE**/
+	}
+
+	handleItemClose(){
+		this.setState({
+			"currItemView": null,
+			"inventoryDisp": {display: 'block'},
+			"itemDisp": {display: 'none'},
+		});
+	}
+
+	showCart(){
+		console.log("CART");
+		this.setState({
+			"renderPhase": 2
+		});
+	}
+
+	handleCartClose(){
+		this.setState({
+			"renderPhase": 1
+		});
+	}
 
 	render() {
 		let renderBlock;
@@ -215,7 +298,17 @@ class Root extends React.Component {
 				</div>;
 		}
 		else if(this.state.renderPhase == 1){
-			renderBlock = "works!";
+			renderBlock = [
+				<div onClick={this.showCart}>CART</div>,
+				<InventoryCont style={this.state.inventoryDisp} invData={this.state.inventoryData} onSel={this.handleInvItemSel} />
+				];
+
+			if(this.state.currItemView){
+				renderBlock.push(<ItemComp itemData={this.state.inventoryData[this.state.currItemView]} onBuy={this.handleItemBuy} onClose={this.handleItemClose} />)
+			}
+		}
+		else if(this.state.renderPhase == 2){
+			renderBlock = <CartComp onCartClose={this.handleCartClose} />
 		}
 
 		return(
@@ -230,4 +323,4 @@ export default Root;
 
 const wrapper = document.getElementById('app');
 
-wrapper ? ReactDOM.render(wrapper, <Root />) : false;
+wrapper ? ReactDOM.render(<Root />, wrapper) : false;
