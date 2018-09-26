@@ -20,11 +20,11 @@ class ItemComp extends React.Component{
 		return(
 			<div style={this.props.style}>
 				<div onClick={this.handleCancel}>X</div>
-				<div><img src={this.props.itemData.img} /></div>
-				<div>{this.props.itemData.itemName}</div>
+				<img src={require('../resources/' + this.props.itemData.img)} />
+				<div>{this.props.itemData.name}</div>
 				<div>{this.props.itemData.price}</div>
 				<div>{this.props.itemData.rating}</div>
-				<div>{this.props.itemData.descr}</div>
+				<div>{this.props.itemData.descrip}</div>
 				<div onClick={this.handleAdd}>Add to Cart</div>
 			</div>
 		);

@@ -15,8 +15,8 @@ class InventoryCont extends React.Component{
 	render(){
 		let renderArr = [];
 		if(this.props.invData){
-			renderArr = this.props.invData.map(itemObj => 
-				<InvItem ind={itemObj.itemInd} img={itemObj.img} itemName={itemObj.itemName} price={itemObj.price} rating={itemObj.rating} onClick={this.handleItemSel}/>
+			renderArr = this.props.invData.map((itemObj, ind) => 
+				<InvItem ind={ind} itemData={itemObj} onClick={this.handleItemSel}/>
 			)
 		}
 		return(

@@ -15,10 +15,10 @@ class InvItem extends React.Component{
 	render(){
 		return(
 			<div id={this.props.ind} onClick={this.handleClick}>
-				<div><img src={this.props.img} /></div>
-				<div>{this.props.itemName}</div>
-				<div>{this.props.price}</div>
-				<div>{this.props.rating}</div>
+				<img src={require('../resources/'+this.props.itemData.img)} />
+				<div>{this.props.itemData.name}</div>
+				<div>$ {this.props.itemData.price}</div>
+				<div>{this.props.itemData.rating}</div>
 			</div>
 		)
 	}
