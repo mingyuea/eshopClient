@@ -6,6 +6,8 @@ import Login from './Login.js';
 import InventoryCont from './InventoryCont.js';
 import ItemComp from './ItemComp.js';
 import CartComp from './CartComp.js';
+import CartCancelComp from './CartCancelComp.js';
+import AddConfirmCont from './AddConfirmCont.js';
 
 class Root extends React.Component {
 	constructor(props){
@@ -45,12 +47,15 @@ class Root extends React.Component {
 				}
 			],
 			"inventoryDisp": {display: 'block'},
-			"itemDisp": {dipslay: 'none'},
+			"itemDisp": {display: 'none'},
+			"addDisp": {display: 'none'},
 			"currItemView": null,
 			"tmpCart": [],
+			"tmpCartCount": 0,
 			"viewCart": [],
 			"cartCancelCode": "",
 			"cartCancelName": "",
+			"cartCancelInd": null,
 			"cartCancelDisp": {display: 'none'}
 		}
 
@@ -65,10 +70,15 @@ class Root extends React.Component {
 		this.getInventory = this.getInventory.bind(this);
 		this.handleInvItemSel = this.handleInvItemSel.bind(this);
 		this.handleItemBuy = this.handleItemBuy.bind(this);
+		this.addConfirmClose = this.addConfirmClose.bind(this);
 		this.handleItemClose = this.handleItemClose.bind(this);
 		this.showCart = this.showCart.bind(this);
+
 		this.handleCartItemCancel = this.handleCartItemCancel.bind(this);
+		this.handleCartItemClose = this.handleCartItemClose.bind(this);
+		this.handleCartItemRemove = this.handleCartItemRemove.bind(this);
 		this.handleCartClose = this.handleCartClose.bind(this);
+
 		this.handleLogout = this.handleLogout.bind(this);
 	}
 
@@ -174,10 +184,6 @@ class Root extends React.Component {
 					}
 				})
 				.then(res => res.json())
-				.then(resObj => {
-					console.log(resObj);
-					return resObj;
-				})
 				.then(data => {
 					if(data.actionSuccess){
 						return true;
@@ -228,10 +234,6 @@ class Root extends React.Component {
 				}
 			})
 			.then(res => res.json())
-			.then(data => {
-				console.log(data);
-				return data;
-			})
 			.then(resObj => {
 				if(resObj.actionSuccess){
 					let dispName = this.state.uInput;
@@ -263,17 +265,12 @@ class Root extends React.Component {
 
 		fetch(url)
 		.then(res => res.json())
-		.then(data => {
-			console.log(data);
-			return data;
-		})
 		.then(data => this.setState({
 			"inventoryData": data
 		}));
 	}
 
 	handleInvItemSel(ind){
-		console.log(ind);
 
 		this.setState({
 			"currItemView": ind,
@@ -283,16 +280,41 @@ class Root extends React.Component {
 	}
 
 	handleItemBuy(){
-		let itemcode = this.state.inventoryData[this.state.currItemView].itemcode;
+		let itemind = this.state.currItemView;
+		let itemData = this.state.inventoryData[itemind];
+		let itemcode = itemData.itemcode;
+		let tmpCart = this.state.tmpCart;
 
 		if(this.state.anon){
-		//THIS IS A PLACEHOLDER FOR THE BACKEND
-			let tmpCart = this.state.tmpCart;
-			tmpCart.push(itemcode);
+		//THIS IS A PLACEHOLDER FOR THE BACKEND			
+			let itemCount = this.state.tmpCartCount;
+			let itemPresent = false;
+			let itemInd = null;
+
+			for(let i = 0; i < itemCount; i++){
+				if(tmpCart[i].itemcode == itemcode){
+					itemPresent = true;
+					itemInd = i;
+				}
+			}
+			if(itemPresent){
+				tmpCart[itemInd].amt += 1;
+			}
+			else{
+				let newItem = {
+					"itemcode": itemcode,
+					"amt": 1,
+					"itemData": itemData
+				};
+				tmpCart.push(newItem);
+				itemCount += 1;
+			}
+			
 			this.setState({
-				"tmpCart": tmpCart
+				"tmpCart": tmpCart,
+				"addDisp": {display: 'block'},
+				"tmpCartCount": itemCount
 			});
-			//console.log(tmpCart);
 		/**PLACEHOLDER ENDS HERE**/
 		}
 		else{
@@ -311,8 +333,17 @@ class Root extends React.Component {
 					}
 			})
 			.then(res => res.json())
-			.then(data => console.log(data));
+			.then(data => this.setState({
+				"tmpCartCount": data.itemCount,
+				"addDisp": {display: 'block'}	
+			}));
 		}
+	}
+
+	addConfirmClose(){
+		this.setState({
+			"addDisp": {display: 'none'}
+		});
 	}
 
 	handleItemClose(){
@@ -343,10 +374,6 @@ class Root extends React.Component {
 					}
 			})
 			.then(res => res.json())
-			.then(data => {
-				console.log(data);
-				return data;
-			})
 			.then(data => this.setState({
 				"viewCart": data,
 				"renderPhase": 2
@@ -355,10 +382,69 @@ class Root extends React.Component {
 	}
 
 	handleCartItemCancel(code, ind){
-		console.log('Cancel item: '+ code + ' ind: '+ ind);
+		let itemName = this.state.viewCart[ind].itemData.name;
+
+		this.setState({
+			"cartCancelCode": code,
+			"cartCancelName": itemName,
+			"cartCancelInd": ind,
+			"cartCancelDisp": {display: 'block'}
+		});
+	}
+
+	handleCartItemClose(){
+		this.setState({
+			"cartCancelCode": "",
+			"cartCancelName": "",
+			"cartCancelInd": "",
+			"cartCancelDisp": {display: 'none'}
+		});
+	}
+
+	handleCartItemRemove(){
+		if(this.state.anon){
+			let tmpCart = this.state.tmpCart;
+			let cartInd = this.state.cartCancelInd;
+
+			tmpCart.splice(cartInd, 1);
+
+			this.setState({
+				"tmpCart": tmpCart
+			});
+
+			this.handleCartItemClose();
+		}
+		else{
+			let tmpArr = this.state.viewCart;
+			let url = this.state.fetchUrl + '/operations/remove';
+			let reqBody = {
+				"itemCode": this.state.cartCancelCode
+			};
+
+			tmpArr.splice(this.state.cartCancelInd, 1);
+			
+			fetch(url, {
+				method: 'POST',
+				mode: 'cors',
+				credentials: 'include',
+				body: JSON.stringify(reqBody),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then(res => res.json())
+			.then(data => this.setState({
+					"viewCart": tmpArr
+				})
+			)
+
+			this.handleCartItemClose();
+		}
 	}
 
 	handleCartClose(){
+		this.handleCartItemClose();
+
 		this.setState({
 			"renderPhase": 1
 		});
@@ -387,7 +473,7 @@ class Root extends React.Component {
 			}
 		});
 
-		this.handleInitCancel()
+		this.handleInitCancel();
 	}
 
 	componentDidMount(){
@@ -429,12 +515,14 @@ class Root extends React.Component {
 				];
 
 			if(this.state.currItemView){
-				renderBlock.push(<ItemComp itemData={this.state.inventoryData[this.state.currItemView]} onBuy={this.handleItemBuy} onClose={this.handleItemClose} />)
+				renderBlock.push(<ItemComp itemData={this.state.inventoryData[this.state.currItemView]} onBuy={this.handleItemBuy} onClose={this.handleItemClose} />);
+				renderBlock.push(<AddConfirmCont style={this.state.addDisp} itemName={this.state.inventoryData[this.state.currItemView].itemName} onClose={this.addConfirmClose} />)
 			}
 		}
 		else if(this.state.renderPhase == 2){
 			renderBlock = [
 				<div onClick={this.handleLogout}>Logout</div>,
+				<CartCancelComp style={this.state.cartCancelDisp} itemName={this.state.cartCancelName} onRemove={this.handleCartItemRemove} onCancel={this.handleCartItemClose} />,
 				<CartComp onCartClose={this.handleCartClose} cartData={this.state.viewCart} onItemCancel={this.handleCartItemCancel} />
 			]
 		}

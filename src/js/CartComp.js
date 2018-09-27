@@ -22,7 +22,7 @@ class CartComp extends React.Component{
 
 		return(
 			<div>
-				CART!
+				Your Cart
 				{cartRender}
 				<div onClick={this.props.onCartClose}>X</div>
 			</div>
