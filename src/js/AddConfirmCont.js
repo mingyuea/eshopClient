@@ -8,7 +8,7 @@ class AddConfirmCont extends React.Component{
 	render(){
 		return(
 			<div style={this.props.style}>
-				{this.props.itemName} has been added to your cart!
+				Item has been added to your cart!
 				<div onClick={this.props.onClose}>OK</div>
 			</div>
 		)

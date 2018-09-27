@@ -5,6 +5,7 @@ class CartItem extends React.Component{
 		super(props);
 
 		this.handleCancel = this.handleCancel.bind(this);
+		this.handleItemSel = this.handleItemSel.bind(this);
 	}
 
 	handleCancel(e){
@@ -12,9 +13,14 @@ class CartItem extends React.Component{
 		this.props.onCancel(id);
 	}
 
+	handleItemSel(e){
+		let id = e.currentTarget.id;
+		this.props.onSel(id)
+	}
+
 	render(){
 		return(
-			<div id={this.props.cartInd}>
+			<div id={this.props.cartInd} onClick={this.handleItemSel}>
 				<img src={require('../resources/'+this.props.itemData.img)} />
 				<div>{this.props.itemData.name}</div>
 				<div>$ {this.props.itemData.price}</div>

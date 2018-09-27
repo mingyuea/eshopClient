@@ -6,6 +6,7 @@ class CartComp extends React.Component{
 		super(props);
 
 		this.handleItemCancel = this.handleItemCancel.bind(this);
+		this.handleItemSel = this.handleItemSel.bind(this);
 	}
 
 	handleItemCancel(ind){
@@ -13,11 +14,16 @@ class CartComp extends React.Component{
 		this.props.onItemCancel(itemCode, ind);
 	}
 
+	handleItemSel(ind){
+		let itemcode = this.props.cartData[ind].itemcode;
+		this.props.onItemSel(itemcode);
+	}
+
 	render(){
 		let cartRender = "Your cart is empty";
 		if(this.props.cartData.length > 0){
 			cartRender = this.props.cartData.map((obj, ind) => 
-				<CartItem cartInd={ind} itemData={obj.itemData} itemCount={obj.amt} onCancel={this.handleItemCancel} />)
+				<CartItem cartInd={ind} itemData={obj.itemData} itemCount={obj.amt} onSel={this.handleItemSel} onCancel={this.handleItemCancel} />)
 		}
 
 		return(

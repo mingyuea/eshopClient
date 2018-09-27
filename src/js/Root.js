@@ -22,6 +22,7 @@ class Root extends React.Component {
 			"loginErr": "",
 			"initStyle": {display: 'block'},
 			"loginStyle": {display: 'none'},
+			"initOption": "Signup/Login",
 			"isSignUp": false,
 			"loadingMsg": null,
 			"currName": "",
@@ -29,21 +30,21 @@ class Root extends React.Component {
 			"inventoryData": [
 				{
 					"ind": 0,
-					"itemcode": "p1",
-					"itemName": "Casual Pants",
-					"price": 18,
-					"img": "p1.jpg",
-					"descrip": "A pair of nice, casual pants, for doing casual stuff",
-					"rating": "3.5"
+					"itemcode": "cas1",
+					"itemName": "White Casual Shirt",
+					"price": 14,
+					"img": "cas1.jpg",
+					"descrip": "A nice, casual buttoned shirt",
+					"rating": "4.1"
 				},
 				{
 					"ind": 1,
-					"itemcode": "p2",
-					"itemName": "Some Other Casual Pants",
-					"price": 21.99,
-					"img": "p2.jpg",
-					"descrip": "A better pair of nice, casual pants, for doing casual stuff",
-					"rating": "4"
+					"itemcode": "cas2",
+					"itemName": "Black Casual Shirt",
+					"price": 14,
+					"img": "cas2.jpg",
+					"descrip": "A black casual buttoned shirt",
+					"rating": "4.5"
 				}
 			],
 			"inventoryDisp": {display: 'block'},
@@ -51,7 +52,7 @@ class Root extends React.Component {
 			"addDisp": {display: 'none'},
 			"currItemView": null,
 			"tmpCart": [],
-			"tmpCartCount": 0,
+			"tmpCartCount": null,
 			"viewCart": [],
 			"cartCancelCode": "",
 			"cartCancelName": "",
@@ -74,6 +75,7 @@ class Root extends React.Component {
 		this.handleItemClose = this.handleItemClose.bind(this);
 		this.showCart = this.showCart.bind(this);
 
+		this.handleCartItemSelect = this.handleCartItemSelect.bind(this);
 		this.handleCartItemCancel = this.handleCartItemCancel.bind(this);
 		this.handleCartItemClose = this.handleCartItemClose.bind(this);
 		this.handleCartItemRemove = this.handleCartItemRemove.bind(this);
@@ -102,8 +104,9 @@ class Root extends React.Component {
 			this.setState({
 				"dispName": "Your",
 				"anon": true,
-				"renderPhase": 1
-			});
+				"renderPhase": 1,
+				"initOption": "Signup/Login"
+			});			
 		}
 	}
 
@@ -174,7 +177,7 @@ class Root extends React.Component {
 					"loginErr": ""
 				});
 
-				fetch(url, {
+				fetch(url, {  //handles signup POST
 					method: 'POST',
 					mode: 'cors',
 					body: JSON.stringify(signupObj),
@@ -199,15 +202,17 @@ class Root extends React.Component {
 				.then(result => {
 					if(result){
 						let dispName = this.state.uInput;
+
 						this.setState({
 							"renderPhase": 1,
 							"pInput": "",
 							"p2Input": "",
 							"isSignUp": false,
 							"currName": this.state.uInput,
-							"dispName": dispName, 
+							"dispName": dispName,
+							"initOption": "Logout",
 							"anon": false
-						});
+						});	
 					}
 				});
 			}
@@ -244,6 +249,7 @@ class Root extends React.Component {
 						"isSignUp": false,
 						"currName": this.state.uInput,
 						"dispName": dispName,
+						"initOption": "Logout",
 						"loadingMsg": null,
 						"anon": false
 					});
@@ -271,7 +277,7 @@ class Root extends React.Component {
 	}
 
 	handleInvItemSel(ind){
-
+		console.log(ind);
 		this.setState({
 			"currItemView": ind,
 			"inventoryDisp": {display: 'none'},
@@ -280,25 +286,26 @@ class Root extends React.Component {
 	}
 
 	handleItemBuy(){
-		let itemind = this.state.currItemView;
+		let itemind = Number(this.state.currItemView);
+		//console.log(this.state.inventoryData[itemind], itemind);
 		let itemData = this.state.inventoryData[itemind];
-		let itemcode = itemData.itemcode;
+		let itemcode = itemData["itemcode"];
 		let tmpCart = this.state.tmpCart;
-
+		
 		if(this.state.anon){
 		//THIS IS A PLACEHOLDER FOR THE BACKEND			
 			let itemCount = this.state.tmpCartCount;
 			let itemPresent = false;
-			let itemInd = null;
+			let cartInd = null;
 
 			for(let i = 0; i < itemCount; i++){
 				if(tmpCart[i].itemcode == itemcode){
 					itemPresent = true;
-					itemInd = i;
+					cartInd = i;
 				}
 			}
 			if(itemPresent){
-				tmpCart[itemInd].amt += 1;
+				tmpCart[cartInd].amt += 1;
 			}
 			else{
 				let newItem = {
@@ -350,7 +357,8 @@ class Root extends React.Component {
 		this.setState({
 			"currItemView": null,
 			"inventoryDisp": {display: 'block'},
-			"itemDisp": {display: 'none'}
+			"itemDisp": {display: 'none'},
+			"addDisp": {display: 'none'}
 		});
 	}
 
@@ -360,7 +368,8 @@ class Root extends React.Component {
 
 			this.setState({
 				"viewCart": tmpData,
-				"renderPhase": 2
+				"renderPhase": 2,
+				"addDisp": {display: 'none'}
 			})
 		}
 		else{
@@ -374,11 +383,35 @@ class Root extends React.Component {
 					}
 			})
 			.then(res => res.json())
-			.then(data => this.setState({
-				"viewCart": data,
-				"renderPhase": 2
-			}))
+			.then(data => {
+				let itemCount = data.length;
+
+				this.setState({
+					"viewCart": data,
+					"renderPhase": 2,
+					"addDisp": {display: 'none'},
+					"tmpCartCount": itemCount
+				})
+			})
 		}
+	}
+
+	handleCartItemSelect(itemcode){
+		let invLen = this.state.inventoryData.length;
+		let inv = this.state.inventoryData;
+		let viewInd = null;
+
+		for(let i = 0; i < invLen; i++){
+			if(inv[i]["itemcode"] == itemcode){
+				viewInd = i;
+				break;
+			}
+		}
+		this.setState({
+			"renderPhase": 1
+		});
+
+		this.handleInvItemSel(String(viewInd));
 	}
 
 	handleCartItemCancel(code, ind){
@@ -405,11 +438,18 @@ class Root extends React.Component {
 		if(this.state.anon){
 			let tmpCart = this.state.tmpCart;
 			let cartInd = this.state.cartCancelInd;
+			let tmpCartCount = this.state.tmpCartCount;
 
 			tmpCart.splice(cartInd, 1);
+			tmpCartCount -= 1;
+
+			if(tmpCartCount == 0){
+				tmpCartCount = null
+			}
 
 			this.setState({
-				"tmpCart": tmpCart
+				"tmpCart": tmpCart,
+				"tmpCartCount": tmpCartCount
 			});
 
 			this.handleCartItemClose();
@@ -451,32 +491,63 @@ class Root extends React.Component {
 	}
 
 	handleLogout(){
-		let url = this.state.fetchUrl + '/auth/logout';
-		fetch(url, {
-			method: 'GET',
-			credentials: 'include',
-			mode: 'cors',
-			header: {
-				'Content-Type': 'application/json'
-			}
-		})
-		.then(res => res.json())
-		.then(data => {
-			if(data.logout){
-				this.setState({
-					"currName": null,
-					"renderPhase": 0,
-					"currItemView": null,
-					"inventoryDisp": {display: 'block'},
-					"itemDisp": {display: 'none'},
-				});
-			}
-		});
+		if(this.state.anon){
+			this.handleInitCancel();
+			this.setState({
+				"renderPhase": 0,
+				"currItemView": null,
+				"inventoryDisp": {display: 'block'},
+				"itemDisp": {display: 'none'},
+				"addDisp": {display: 'none'},
+				"tmpCart": [],
+				"tmpCartCount": null,
+				"viewCart": [],
+				"cartCancelCode": "",
+				"cartCancelName": "",
+				"cartCancelInd": null,
+				"cartCancelDisp": {display: 'none'}
+			});
+		}
+		else{
+			let url = this.state.fetchUrl + '/auth/logout';
+			fetch(url, {
+				method: 'GET',
+				credentials: 'include',
+				mode: 'cors',
+				header: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then(res => res.json())
+			.then(data => {
+				if(data.logout){
+					this.setState({
+						"currName": null,
+						"renderPhase": 0,
+						"currItemView": null,
+						"inventoryDisp": {display: 'block'},
+						"itemDisp": {display: 'none'},
+						"addDisp": {display: 'none'},
+						"initOption": "Logout",
+						"tmpCartCount": null,
+						"tmpCart": [],
+						"viewCart": [],
+						"cartCancelCode": "",
+						"cartCancelName": "",
+						"cartCancelInd": null,
+						"cartCancelDisp": {display: 'none'}
 
-		this.handleInitCancel();
+					});
+				}
+			});
+
+			this.handleInitCancel();
+		}
 	}
 
 	componentDidMount(){
+		this.getInventory();
+
 		let url = this.state.fetchUrl + '/auth/init';
 		fetch(url, {
 			method: 'GET',
@@ -491,8 +562,9 @@ class Root extends React.Component {
 			if(data.signedIn){
 				this.setState({
 					"currName": data.username,
-					"renderPhase": 1
-				})
+					"renderPhase": 1,
+					"initOption": "Logout"
+				});	
 			}
 		});
 	}
@@ -508,22 +580,21 @@ class Root extends React.Component {
 		}
 		else if(this.state.renderPhase == 1){
 			renderBlock = [
-				<div onClick={this.handleLogout}>Logout</div>,
-				<div onClick={this.showCart}>CART</div>,
-				<div onClick={this.getInventory}>Update Inventory</div>,
+				<div onClick={this.handleLogout}>{this.state.initOption}</div>,
+				<div onClick={this.showCart}>CART {this.state.tmpCartCount}</div>,
 				<InventoryCont style={this.state.inventoryDisp} invData={this.state.inventoryData} onSel={this.handleInvItemSel} />
 				];
 
 			if(this.state.currItemView){
-				renderBlock.push(<ItemComp itemData={this.state.inventoryData[this.state.currItemView]} onBuy={this.handleItemBuy} onClose={this.handleItemClose} />);
-				renderBlock.push(<AddConfirmCont style={this.state.addDisp} itemName={this.state.inventoryData[this.state.currItemView].itemName} onClose={this.addConfirmClose} />)
+				renderBlock.push(<ItemComp itemData={this.state.inventoryData[Number(this.state.currItemView)]} onBuy={this.handleItemBuy} onClose={this.handleItemClose} />);
+				renderBlock.push(<AddConfirmCont style={this.state.addDisp} onClose={this.addConfirmClose} />)
 			}
 		}
 		else if(this.state.renderPhase == 2){
 			renderBlock = [
-				<div onClick={this.handleLogout}>Logout</div>,
+				<div onClick={this.handleLogout}>{this.state.initOption}</div>,
 				<CartCancelComp style={this.state.cartCancelDisp} itemName={this.state.cartCancelName} onRemove={this.handleCartItemRemove} onCancel={this.handleCartItemClose} />,
-				<CartComp onCartClose={this.handleCartClose} cartData={this.state.viewCart} onItemCancel={this.handleCartItemCancel} />
+				<CartComp onCartClose={this.handleCartClose} cartData={this.state.viewCart} onItemCancel={this.handleCartItemCancel} onItemSel={this.handleCartItemSelect} />
 			]
 		}
 
