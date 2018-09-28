@@ -1,0 +1,38 @@
+$borderColor: rgba(195, 205, 221, 0.7);
+
+.main{
+	margin: 0px 0px 20px 15px;
+	border: 1px solid $borderColor;
+	box-shadow: 2px 2px 2px $borderColor;
+	height: 300px;
+	width: 240px;
+	padding-left: 15px;
+	padding-top: 3px;
+}
+
+.itemImg{
+	max-width: 200px;
+	max-height: 250px;
+}
+
+.nameTxt{
+	font-size: 0.75em;
+	display: inline-block;
+	max-width: 65%;
+}
+
+.priceTxt{
+	position: relative;
+	display: inline-block;
+	font-size: 1.2em;
+	left: 10%;
+}
+
+.ratingTxt{
+	display: block;
+	font-size: 0.75em;
+}
+
+.main:hover{
+	cursor: pointer;
+}

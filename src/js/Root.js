@@ -47,7 +47,7 @@ class Root extends React.Component {
 					"rating": "4.5"
 				}
 			],
-			"inventoryDisp": {display: 'block'},
+			"inventoryDisp": {display: 'flex'},
 			"itemDisp": {display: 'none'},
 			"addDisp": {display: 'none'},
 			"currItemView": null,
@@ -356,7 +356,7 @@ class Root extends React.Component {
 	handleItemClose(){
 		this.setState({
 			"currItemView": null,
-			"inventoryDisp": {display: 'block'},
+			"inventoryDisp": {display: 'flex'},
 			"itemDisp": {display: 'none'},
 			"addDisp": {display: 'none'}
 		});
@@ -496,7 +496,7 @@ class Root extends React.Component {
 			this.setState({
 				"renderPhase": 0,
 				"currItemView": null,
-				"inventoryDisp": {display: 'block'},
+				"inventoryDisp": {display: 'flex'},
 				"itemDisp": {display: 'none'},
 				"addDisp": {display: 'none'},
 				"tmpCart": [],
@@ -525,7 +525,7 @@ class Root extends React.Component {
 						"currName": null,
 						"renderPhase": 0,
 						"currItemView": null,
-						"inventoryDisp": {display: 'block'},
+						"inventoryDisp": {display: 'flex'},
 						"itemDisp": {display: 'none'},
 						"addDisp": {display: 'none'},
 						"initOption": "Logout",
@@ -580,8 +580,9 @@ class Root extends React.Component {
 		}
 		else if(this.state.renderPhase == 1){
 			renderBlock = [
-				<div onClick={this.handleLogout}>{this.state.initOption}</div>,
-				<div onClick={this.showCart}>CART {this.state.tmpCartCount}</div>,
+				<div className={Style.phaseHeader}><div className={Style.headerTxt}>The Shop</div></div>,
+				<div onClick={this.handleLogout} className={Style.logout}>{this.state.initOption}</div>,
+				<div onClick={this.showCart} className={Style.cart}>CART {this.state.tmpCartCount}</div>,
 				<InventoryCont style={this.state.inventoryDisp} invData={this.state.inventoryData} onSel={this.handleInvItemSel} />
 				];
 
@@ -592,6 +593,7 @@ class Root extends React.Component {
 		}
 		else if(this.state.renderPhase == 2){
 			renderBlock = [
+				<div className={Style.phaseHeader}><div className={Style.headerTxt}>Your Cart</div></div>,
 				<div onClick={this.handleLogout}>{this.state.initOption}</div>,
 				<CartCancelComp style={this.state.cartCancelDisp} itemName={this.state.cartCancelName} onRemove={this.handleCartItemRemove} onCancel={this.handleCartItemClose} />,
 				<CartComp onCartClose={this.handleCartClose} cartData={this.state.viewCart} onItemCancel={this.handleCartItemCancel} onItemSel={this.handleCartItemSelect} />

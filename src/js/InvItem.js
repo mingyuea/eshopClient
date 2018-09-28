@@ -1,4 +1,5 @@
 import React from 'react';
+import Style from '../scss/InvItem.scss';
 
 class InvItem extends React.Component{
 	constructor(props){
@@ -14,11 +15,11 @@ class InvItem extends React.Component{
 
 	render(){
 		return(
-			<div id={this.props.ind} onClick={this.handleClick}>
-				<img src={require('../resources/'+this.props.itemData.img)} />
-				<div>{this.props.itemData.name}</div>
-				<div>$ {this.props.itemData.price}</div>
-				<div>{this.props.itemData.rating}</div>
+			<div id={this.props.ind} onClick={this.handleClick} className={Style.main}>
+				<img src={require('../resources/'+this.props.itemData.img)} className={Style.itemImg} />
+				<div className={Style.nameTxt}>{this.props.itemData.name}</div>
+				<div className={Style.priceTxt}>${this.props.itemData.price}</div>
+				<div className={Style.ratingTxt}>{this.props.itemData.rating}</div>
 			</div>
 		)
 	}

@@ -1,0 +1,12 @@
+@import 'allShared';
+
+.main{
+	position: absolute;
+	top:$headerHt + 5%;	
+	left: 5%;
+	width: 95%;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	align-content: space-around;
+}

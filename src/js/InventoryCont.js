@@ -1,5 +1,6 @@
 import React from 'react';
 import InvItem from './InvItem.js';
+import Style from '../scss/InventoryCont.scss';
 
 class InventoryCont extends React.Component{
 	constructor(props){
@@ -20,7 +21,7 @@ class InventoryCont extends React.Component{
 			)
 		}
 		return(
-			<div style={this.props.style}>
+			<div style={this.props.style} className={Style.main}>
 				{renderArr}
 			</div>
 		);

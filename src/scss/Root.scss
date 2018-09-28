@@ -1,3 +1,4 @@
+@import 'allShared';
 
 .mainCont{
 	width: 100%;
@@ -21,4 +22,51 @@
 
 .phase1{
 	color:black;
+}
+
+.phaseHeader{
+	position: absolute;
+	display: block;
+	margin: 0;
+	top: 0%;
+	height: $headerHt;
+	width: 100%;
+	background-color: black;
+}
+
+.headerTxt{
+	position: relative;
+	display: block;
+	top: 20%;
+	left: 40%;
+	width: 60%;
+	height: 75%;
+	color: white;
+	font-size: 3.5vh;
+}
+
+.logout, .cart{
+	display: block;
+	position: absolute;
+	color: white;
+	top: $iconTop;
+	height: $iconHt;
+	z-index: 1000;
+}
+
+.logout{
+	font-size: 2vmin;
+	font-family: Serif;
+	left: 85%;
+	width: 14%;
+}
+
+.cart{
+	font-size: 2.25 vmin;
+	left: 5%;
+	width: 15%;
+}
+
+.logout:hover, .cart:hover{
+	cursor: pointer
 }
