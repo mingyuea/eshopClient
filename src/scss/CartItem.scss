@@ -1,0 +1,62 @@
+$borderColor: rgba(195, 205, 221, 0.7);
+$textContMaxW: 65%;
+$imgMaxW: 25%;
+
+.mainCont{
+	position: relative;
+	display: block;
+	width: 90%;
+	height: 15%;
+	margin-top: 2%;
+	margin-left: 2%;
+	border: 1px solid $borderColor;
+	box-shadow: 2px 2px 2px $borderColor;
+}
+
+.mainCont > div{
+	position: absolute;
+}
+
+.img{
+	position: absolute;
+	height: 90%;
+	top: 5%;
+	width: auto; 
+	max-width: $imgMaxW;
+}
+
+.textCont{
+	left: $imgMaxW+5%;
+	top: 10%;
+	height: 100%;
+	max-width: $textContMaxW;
+	margin-left: 5px;
+}
+
+.itemCancel{
+	left: $imgMaxW + $textContMaxW + 4%;
+	font-size: 4vmin;
+	top: 33%;
+}
+
+.textCont:hover, .itemCancel:hover{
+	cursor: pointer;
+}
+
+.itemName{
+	font-size: 3.75vmin;
+	font-family: Serif;
+	display: block;
+	margin-bottom: 5%;
+}
+
+.itemQty{
+	display: inline-block;
+	font-size: 2.25vmin;
+}
+
+.itemPrice{
+	display: inline-block;
+	font-size: 2.75vmin;
+	margin-left: 50%;
+}

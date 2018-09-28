@@ -1,0 +1,25 @@
+@import 'wrapperShared';
+
+.wrapper{
+	@extend %wrapperClass;
+}
+
+.boxCont{
+	@extend %boxContClass;
+	width: 300px;
+	height: 150px;
+}
+
+.textCont{
+	font-size: 1.1em;
+	margin: 25px 10px 30px 20px;
+}
+
+.btn{
+	@extend %btnClass;
+	margin-left: 90px;
+}
+
+.btn:hover{
+	@extend %btnHover;
+}

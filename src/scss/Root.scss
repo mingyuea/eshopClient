@@ -37,10 +37,10 @@
 .headerTxt{
 	position: relative;
 	display: block;
-	top: 20%;
+	top: 25%;
 	left: 40%;
 	width: 60%;
-	height: 75%;
+	height: 70%;
 	color: white;
 	font-size: 3.5vh;
 }
@@ -68,5 +68,6 @@
 }
 
 .logout:hover, .cart:hover{
-	cursor: pointer
+	cursor: pointer;
+	color: rgba(125, 132, 137, 1);
 }

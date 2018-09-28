@@ -13,10 +13,7 @@ $btnHover: rgba(138, 140, 142, 0.9);
 }
 
 .close{
-	position: absolute;
-	left: 90%;
-	top: 10px;
-	font-size: 1.75em;
+	@extend %closeBtn;
 }
 
 .close:hover{

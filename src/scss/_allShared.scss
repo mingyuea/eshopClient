@@ -1,3 +1,10 @@
 $headerHt: 10%;
 $iconTop: 2%;
-$iconHt: 7%;;
+$iconHt: 7%;
+
+%closeBtn{
+	position: absolute;
+	left: 92%;
+	top: 10px;
+	font-size: 1.75em;
+}

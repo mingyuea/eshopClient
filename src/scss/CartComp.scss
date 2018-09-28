@@ -1,0 +1,32 @@
+@import 'allShared';
+
+$closeT: 2%;
+$closeH: 5%;
+
+.main{
+	position: absolute;
+	top: $headerHt;
+	height: 100% - $headerHt;
+	width: 100%;
+	overflow: auto;
+}
+
+.closeBtn{
+	position: absolute;
+	top: $closeT;
+	left: 5%;
+	height: $closeH;
+	font-size: 4vmin;
+}
+
+.closeBtn:hover{
+	cursor: pointer;
+	color: rgba(125, 132, 137, 1);
+}
+
+.listCont{
+	position: absolute;
+	top: $closeT + $closeH + 2%;
+	width: 100%;
+	height: 98% - $closeT - $closeH;
+}

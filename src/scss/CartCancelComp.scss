@@ -1,0 +1,29 @@
+@import 'wrapperShared';
+
+$boxBG: rgba(138, 142, 145, 1);
+
+.wrapper{
+	@extend %wrapperClass;
+}
+
+.boxCont{
+	@extend %boxContClass;
+	width: 300px;
+	height: 150px;
+}
+
+.textCont{
+	display: block;
+	margin: 25px 5px 25px 20px;
+	font-size: 0.9em;
+	font-family: Helvetica;
+}
+
+.btn{
+	@extend %btnClass;
+	margin-left: 25px;
+}
+
+.btn:hover{
+	@extend %btnHover
+}

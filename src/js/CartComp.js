@@ -1,5 +1,6 @@
 import React from 'react';
 import CartItem from './CartItem.js';
+import Style from  '../scss/CartComp.scss';
 
 class CartComp extends React.Component{
 	constructor(props){
@@ -21,16 +22,18 @@ class CartComp extends React.Component{
 
 	render(){
 		let cartRender = "Your cart is empty";
+		let backBtn = "< Exit Cart";
 		if(this.props.cartData.length > 0){
 			cartRender = this.props.cartData.map((obj, ind) => 
 				<CartItem cartInd={ind} itemData={obj.itemData} itemCount={obj.amt} onSel={this.handleItemSel} onCancel={this.handleItemCancel} />)
 		}
 
 		return(
-			<div>
-				Your Cart
-				{cartRender}
-				<div onClick={this.props.onCartClose}>X</div>
+			<div className={Style.main}>
+				<div onClick={this.props.onCartClose} className={Style.closeBtn}>{backBtn}</div>
+				<div className={Style.listCont}>
+					{cartRender}
+				</div>
 			</div>
 		);
 	}

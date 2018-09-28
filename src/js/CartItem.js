@@ -1,4 +1,5 @@
 import React from 'react';
+import Style from '../scss/CartItem.scss';
 
 class CartItem extends React.Component{
 	constructor(props){
@@ -14,18 +15,20 @@ class CartItem extends React.Component{
 	}
 
 	handleItemSel(e){
-		let id = e.currentTarget.id;
+		let id = e.currentTarget.parentNode.id;
 		this.props.onSel(id)
 	}
 
 	render(){
 		return(
-			<div id={this.props.cartInd} onClick={this.handleItemSel}>
-				<img src={require('../resources/'+this.props.itemData.img)} />
-				<div>{this.props.itemData.name}</div>
-				<div>$ {this.props.itemData.price}</div>
-				<div>QTY: {this.props.itemCount}</div>
-				<div onClick={this.handleCancel}>X</div>
+			<div id={this.props.cartInd} className={Style.mainCont}>
+				<img src={require('../resources/'+this.props.itemData.img)} className={Style.img} />
+				<div className={Style.textCont} onClick={this.handleItemSel}>
+					<div className={Style.itemName}>{this.props.itemData.name}</div>
+					<div className={Style.itemQty}>QTY: {this.props.itemCount}</div>
+					<div className={Style.itemPrice}>${this.props.itemData.price}</div>								
+				</div>
+				<div className={Style.itemCancel}onClick={this.handleCancel}>X</div>
 			</div>
 		)
 	}
