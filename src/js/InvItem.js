@@ -19,7 +19,7 @@ class InvItem extends React.Component{
 				<img src={require('../resources/'+this.props.itemData.img)} className={Style.itemImg} />
 				<div className={Style.nameTxt}>{this.props.itemData.name}</div>
 				<div className={Style.priceTxt}>${this.props.itemData.price}</div>
-				<div className={Style.ratingTxt}>{this.props.itemData.rating}</div>
+				<div className={Style.ratingTxt}>Rating: {this.props.itemData.rating}/5</div>
 			</div>
 		)
 	}

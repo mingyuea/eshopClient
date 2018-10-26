@@ -67,7 +67,21 @@
 	width: 15%;
 }
 
-.logout:hover, .cart:hover{
+.searchToggle{
+	position: absolute;
+	left: 5%;
+	top: $headerHt + 2%;
+	padding: 4px 10px;
+	font-size: 0.9em;
+	font-family: Serif;
+	border: 1px solid black;
+}
+
+.logout:hover, .cart:hover, .searchToggle:hover{
 	cursor: pointer;
 	color: rgba(125, 132, 137, 1);
+}
+
+.searchToggle:hover{
+	border: 1px solid rgba(125, 132, 137, 1);
 }

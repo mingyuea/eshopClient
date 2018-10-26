@@ -25,7 +25,7 @@ class ItemComp extends React.Component{
 				<div className={Style.textCont}>
 					<div className={Style.itemName}>{this.props.itemData.name}</div>
 					<div className={Style.itemPrice}>${this.props.itemData.price}</div>
-					<div>{this.props.itemData.rating}</div>
+					<div>Rating: {this.props.itemData.rating} / 5</div>
 					<div className={Style.itemDescrip}>{this.props.itemData.descrip}</div>
 					<div onClick={this.handleAdd} className={Style.addBtn}>Add to Cart</div>
 				</div>

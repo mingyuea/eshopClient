@@ -15,13 +15,16 @@ $closeH: 5%;
 	position: absolute;
 	top: $closeT;
 	left: 5%;
-	height: $closeH;
-	font-size: 4vmin;
+	font-size: 0.9em;
+	font-family: Serif;
+	border: 1px solid black;
+	padding: 4px 10px;
 }
 
 .closeBtn:hover{
 	cursor: pointer;
 	color: rgba(125, 132, 137, 1);
+	border: 1px solid rgba(125, 132, 137, 1);
 }
 
 .listCont{

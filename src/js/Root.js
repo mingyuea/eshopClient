@@ -8,13 +8,14 @@ import ItemComp from './ItemComp.js';
 import CartComp from './CartComp.js';
 import CartCancelComp from './CartCancelComp.js';
 import AddConfirmCont from './AddConfirmCont.js';
+import SearchComp from './SearchComp.js';
 
 class Root extends React.Component {
 	constructor(props){
 		super(props);
 
 		this.state = {
-			"fetchUrl": "http://localhost:5000",
+			"fetchUrl": "http://comenv.exz7bpncky.us-west-1.elasticbeanstalk.com",
 			"renderPhase": 0,
 			"uInput": "",
 			"pInput": "",
@@ -50,6 +51,9 @@ class Root extends React.Component {
 			"inventoryDisp": {display: 'flex'},
 			"itemDisp": {display: 'none'},
 			"addDisp": {display: 'none'},
+			"searchIn": "",
+			"inputDisp": {display: "inline-block"},
+			"searchDisp": {display: 'none'},
 			"currItemView": null,
 			"tmpCart": [],
 			"tmpCartCount": null,
@@ -69,6 +73,9 @@ class Root extends React.Component {
 		this.handleLogin = this.handleLogin.bind(this);
 
 		this.getInventory = this.getInventory.bind(this);
+		this.handleSearchChange = this.handleSearchChange.bind(this);
+		this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+		this.handleBackInv = this.handleBackInv.bind(this);
 		this.handleInvItemSel = this.handleInvItemSel.bind(this);
 		this.handleItemBuy = this.handleItemBuy.bind(this);
 		this.addConfirmClose = this.addConfirmClose.bind(this);
@@ -272,22 +279,69 @@ class Root extends React.Component {
 		fetch(url)
 		.then(res => res.json())
 		.then(data => this.setState({
-			"inventoryData": data
+			"inventoryData": data,
+			"inputDisp": {display: 'inline-block'},
 		}));
 	}
 
+	handleSearchChange(val){
+		this.setState({
+			"searchIn": val
+		});
+	}
+
+	handleSearchSubmit(){
+		let url = this.state.fetchUrl + '/operations/search';
+		let reqBody = {
+			"searchIn": this.state.searchIn
+		}
+
+		fetch(url, {
+			method: "POST",
+			body: JSON.stringify(reqBody),
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+		.then(res => res.json())
+		.then(data => this.setState({
+			"inventoryData": data
+		}));
+
+		this.setState({
+			"inventoryDisp": {display: 'flex'},
+			"itemDisp": {display: 'none'},
+			"addDisp": {display: 'none'},
+			"searchDisp": {display: 'inline-block'},
+			"currItemView": null
+		});
+	}
+
+	handleBackInv(){
+		this.getInventory();
+
+		this.setState({
+			"itemDisp": {display: 'none'},
+			"addDisp": {display: 'none'},
+			"searchDisp": {display: 'none'},
+			"currItemView": null,
+			"searchIn": ""
+		});
+	}
+
 	handleInvItemSel(ind){
-		console.log(ind);
 		this.setState({
 			"currItemView": ind,
 			"inventoryDisp": {display: 'none'},
 			"itemDisp": {display: 'block'},
+			"searchDisp": {display: 'none'},
+			"inputDisp": {display: 'none'}
 		});
 	}
 
 	handleItemBuy(){
 		let itemind = Number(this.state.currItemView);
-		//console.log(this.state.inventoryData[itemind], itemind);
 		let itemData = this.state.inventoryData[itemind];
 		let itemcode = itemData["itemcode"];
 		let tmpCart = this.state.tmpCart;
@@ -358,6 +412,7 @@ class Root extends React.Component {
 			"currItemView": null,
 			"inventoryDisp": {display: 'flex'},
 			"itemDisp": {display: 'none'},
+			"inputDisp": {display: 'inline-block'},
 			"addDisp": {display: 'none'}
 		});
 	}
@@ -572,6 +627,8 @@ class Root extends React.Component {
 
 	render() {
 		let renderBlock;
+		let returnMsg = "< Back to the shop";
+
 		if(this.state.renderPhase == 0){
 			renderBlock = <div className={Style.initCont} style={this.state.initContStyle}>
 					<InitGreet style={this.state.initStyle} handleInitSel={this.handleInitSel} />
@@ -583,6 +640,8 @@ class Root extends React.Component {
 				<div className={Style.phaseHeader}><div className={Style.headerTxt}>The Shop</div></div>,
 				<div onClick={this.handleLogout} className={Style.logout}>{this.state.initOption}</div>,
 				<div onClick={this.showCart} className={Style.cart}>CART {this.state.tmpCartCount}</div>,
+				<div style={this.state.searchDisp} className={Style.searchToggle} onClick={this.handleBackInv}>{returnMsg}</div>,
+				<SearchComp style={this.state.inputDisp} searchIn={this.state.searchIn} onChange={this.handleSearchChange} onSearch={this.handleSearchSubmit} />,
 				<InventoryCont style={this.state.inventoryDisp} invData={this.state.inventoryData} onSel={this.handleInvItemSel} />
 				];
 
@@ -594,7 +653,7 @@ class Root extends React.Component {
 		else if(this.state.renderPhase == 2){
 			renderBlock = [
 				<div className={Style.phaseHeader}><div className={Style.headerTxt}>Your Cart</div></div>,
-				<div onClick={this.handleLogout}>{this.state.initOption}</div>,
+				<div onClick={this.handleLogout} className={Style.logout}>{this.state.initOption}</div>,
 				<CartCancelComp style={this.state.cartCancelDisp} itemName={this.state.cartCancelName} onRemove={this.handleCartItemRemove} onCancel={this.handleCartItemClose} />,
 				<CartComp onCartClose={this.handleCartClose} cartData={this.state.viewCart} onItemCancel={this.handleCartItemCancel} onItemSel={this.handleCartItemSelect} />
 			]
